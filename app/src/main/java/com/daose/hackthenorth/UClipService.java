@@ -6,11 +6,16 @@ import android.content.ClipboardManager;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class UClipService extends Service {
+    private static final String TAG = UClipService.class.getSimpleName();
 
     private FirebaseDatabase db;
     private DatabaseReference ref;
@@ -45,6 +50,21 @@ public class UClipService extends Service {
                     }
                 }
                 ref.setValue(copiedText);
+            }
+        });
+
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(clipboard.hasPrimaryClip()) {
+                    ClipData data = ClipData.newPlainText("copy", dataSnapshot.getValue(String.class));
+                    clipboard.setPrimaryClip(data);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d(TAG, "onCancelled");
             }
         });
 
