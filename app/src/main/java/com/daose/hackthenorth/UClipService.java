@@ -88,9 +88,10 @@ public class UClipService extends Service {
             }
         });
 
+        //ss directory - screenshot
         final File ssDirectory = new File(Environment.getExternalStorageDirectory() + "/Pictures/Screenshots/");
         ssDirectory.mkdirs();
-//ss directory - screenshot
+
         ssObserver = new FileObserver(ssDirectory.toString()) {
             //move, create, delete
             @Override
@@ -103,10 +104,11 @@ public class UClipService extends Service {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             Uri imgDownloadUri = taskSnapshot.getDownloadUrl();
-                            ref.setValue(imgDownloadUri.toString());
+                            if(imgDownloadUri != null) {
+                                ref.setValue(imgDownloadUri.toString());
+                            }
                         }
                     });
-                    Log.d(TAG, "event: " + event + " path: " + path);
                 }
             }
         };
