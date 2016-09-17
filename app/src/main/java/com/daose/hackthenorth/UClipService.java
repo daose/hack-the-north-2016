@@ -95,17 +95,15 @@ public class UClipService extends Service {
             //move, create, delete
             @Override
             public void onEvent(int event, String path) {
-
-                if (event == FileObserver.CREATE) {
-                    Uri file = Uri.fromFile(new File(ssDirectory.getAbsolutePath() + path));
+                if (event == FileObserver.CLOSE_WRITE) {
+                    Uri file = Uri.fromFile(new File(ssDirectory.getAbsolutePath() + "/" + path));
                     UploadTask uploadTask = ssRef.putFile(file);
                     uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         //only when the file gets uploaded successfully
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
-                            Uri imgdownload = taskSnapshot.getDownloadUrl();
-                            ref.setValue(imgdownload.toString());
+                            Uri imgDownloadUri = taskSnapshot.getDownloadUrl();
+                            ref.setValue(imgDownloadUri.toString());
                         }
                     });
                     Log.d(TAG, "event: " + event + " path: " + path);
