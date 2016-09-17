@@ -2,33 +2,26 @@ package com.daose.hackthenorth;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        final TextView view = (TextView) findViewById(R.id.text);
-
-        final ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-        clipboard.addPrimaryClipChangedListener(new ClipboardManager.OnPrimaryClipChangedListener() {
-            @Override
-            public void onPrimaryClipChanged() {
-                String copiedText = "";
-                if (clipboard.hasPrimaryClip()) {
-                    ClipData data = clipboard.getPrimaryClip();
-                    if (data.getItemCount() > 0) {
-                        copiedText = data.getItemAt(0).coerceToText(MainActivity.this).toString();
-                    }
-                }
-                view.setText(copiedText);
-            }
-        });
-
+        Intent intent = new Intent(this, UClipService.class);
+        startService(intent);
     }
 }
