@@ -4,17 +4,22 @@ import android.app.Service;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Environment;
 import android.os.FileObserver;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 
@@ -39,10 +44,19 @@ public class UClipService extends Service {
     }
 
     @Override
-    public void onCreate() {
-        db = FirebaseDatabase.getInstance();
-        ref = db.getReference("copy");
 
+    public void onCreate() {
+        //connects to Firebase
+        db = FirebaseDatabase.getInstance();
+        //reference to copy
+        ref = db.getReference("copy");
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReferenceFromUrl("gs://uclip-e2537.appspot.com");
+
+        //reference
+        final StorageReference ssRef = storageRef.child("screenshot");
+
+        //Get the system services of clipboard
         final ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
 
         clipboard.addPrimaryClipChangedListener(new ClipboardManager.OnPrimaryClipChangedListener() {
@@ -62,7 +76,7 @@ public class UClipService extends Service {
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(clipboard.hasPrimaryClip()) {
+                if (clipboard.hasPrimaryClip()) {
                     ClipData data = ClipData.newPlainText("copy", dataSnapshot.getValue(String.class));
                     clipboard.setPrimaryClip(data);
                 }
@@ -74,13 +88,26 @@ public class UClipService extends Service {
             }
         });
 
-        File ssDirectory = new File(Environment.getExternalStorageDirectory() + "/Pictures/Screenshots/");
+        final File ssDirectory = new File(Environment.getExternalStorageDirectory() + "/Pictures/Screenshots/");
         ssDirectory.mkdirs();
-
+//ss directory - screenshot
         ssObserver = new FileObserver(ssDirectory.toString()) {
+            //move, create, delete
             @Override
             public void onEvent(int event, String path) {
-                if(event == FileObserver.CREATE) {
+
+                if (event == FileObserver.CREATE) {
+                    Uri file = Uri.fromFile(new File(ssDirectory.getAbsolutePath() + path));
+                    UploadTask uploadTask = ssRef.putFile(file);
+                    uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        //only when the file gets uploaded successfully
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                            Uri imgdownload = taskSnapshot.getDownloadUrl();
+                            ref.setValue(imgdownload.toString());
+                        }
+                    });
                     Log.d(TAG, "event: " + event + " path: " + path);
                 }
             }
