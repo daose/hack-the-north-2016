@@ -8,21 +8,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.yelp.clientlib.connection.YelpAPI;
+import com.yelp.clientlib.connection.YelpAPIFactory;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
-
-    private static final String API_HOST = "api.yelp.com";
-    private static final String DEFAULT_TERM = "dinner";
-    private static final String DEFAULT_LOCATION = "San Francisco, CA";
-    private static final int SEARCH_LIMIT = 3;
-    private static final String SEARCH_PATH = "/v2/search";
-    private static final String BUSINESS_PATH = "/v2/business";
 
     /*
      * Update OAuth credentials below from the Yelp Developers API site:
@@ -33,6 +23,9 @@ public class MainActivity extends AppCompatActivity {
     private static final String TOKEN = "NrQ-3hTN62cPgeItv8b5otNIJiTkkpQ6";
     private static final String TOKEN_SECRET = "36y1ayki63KnTocDWrS-tZfWqXk";
 
+    private YelpAPIFactory apiFactory;
+    private YelpAPI yelpAPI;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +33,11 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, UClipService.class);
         startService(intent);
 
+        setupYelp();
+    }
 
+    private void setupYelp() {
+        YelpAPIFactory apiFactory = new YelpAPIFactory(CONSUMER_KEY, CONSUMER_SECRET, TOKEN, TOKEN_SECRET);
+        YelpAPI yelpAPI = apiFactory.createAPI();
     }
 }
