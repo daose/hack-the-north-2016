@@ -4,6 +4,8 @@ import android.app.Service;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
+import android.os.Environment;
+import android.os.FileObserver;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -14,11 +16,15 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.File;
+
 public class UClipService extends Service {
     private static final String TAG = UClipService.class.getSimpleName();
 
     private FirebaseDatabase db;
     private DatabaseReference ref;
+
+    private FileObserver ssObserver;
 
     @Nullable
     @Override
@@ -68,10 +74,22 @@ public class UClipService extends Service {
             }
         });
 
+        File ssDirectory = new File(Environment.getExternalStorageDirectory() + "/Pictures/Screenshots/");
+        ssDirectory.mkdirs();
+
+        ssObserver = new FileObserver(ssDirectory.toString()) {
+            @Override
+            public void onEvent(int event, String path) {
+                if(event == FileObserver.CREATE) {
+                    Log.d(TAG, "event: " + event + " path: " + path);
+                }
+            }
+        };
+        ssObserver.startWatching();
     }
 
     @Override
     public void onDestroy() {
-
+        ssObserver.stopWatching();
     }
 }
