@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "716339854601",
+    "firebase_url": "https://uclip-e2537.firebaseio.com",
+    "project_id": "uclip-e2537",
+    "storage_bucket": "uclip-e2537.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:716339854601:android:4605b7b0d199e711",
+        "android_client_info": {
+          "package_name": "com.daose.hackthenorth"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "716339854601-d06hsdmfcrtquon3gm5lmsgagi2cnp00.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKCfiGUrHVNI_Q-TeSVB38-KCqR-hT6uQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
