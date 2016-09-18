@@ -31,6 +31,8 @@ public class UClipService extends Service {
 
     private FileObserver ssObserver;
 
+    private String copiedText = "";
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -62,14 +64,20 @@ public class UClipService extends Service {
         clipboard.addPrimaryClipChangedListener(new ClipboardManager.OnPrimaryClipChangedListener() {
             @Override
             public void onPrimaryClipChanged() {
-                String copiedText = "";
+                copiedText = "";
                 if (clipboard.hasPrimaryClip()) {
                     ClipData data = clipboard.getPrimaryClip();
                     if (data.getItemCount() > 0) {
                         copiedText = data.getItemAt(0).coerceToText(UClipService.this).toString();
                     }
                 }
-                ref.setValue(copiedText);
+                Log.d(TAG, "copiedText: " + copiedText);
+                ref.setValue(copiedText, new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                        Log.d(TAG, "onComplete");
+                    }
+                });
             }
         });
 
@@ -77,8 +85,12 @@ public class UClipService extends Service {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (clipboard.hasPrimaryClip()) {
+                    Log.d(TAG, "onDataChange: " + dataSnapshot.getValue(String.class));
                     ClipData data = ClipData.newPlainText("test", dataSnapshot.getValue(String.class));
-                    clipboard.setPrimaryClip(data);
+                    if (!data.getItemAt(0).coerceToText(UClipService.this).equals(copiedText)) {
+                        Log.d(TAG, "data: " + data.toString());
+                        clipboard.setPrimaryClip(data);
+                    }
                 }
             }
 
@@ -104,8 +116,14 @@ public class UClipService extends Service {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             Uri imgDownloadUri = taskSnapshot.getDownloadUrl();
-                            if(imgDownloadUri != null) {
-                                ref.setValue(imgDownloadUri.toString());
+                            if (imgDownloadUri != null) {
+                                Log.d(TAG, "download url: " + imgDownloadUri.toString());
+                                ref.setValue(imgDownloadUri.toString(), new DatabaseReference.CompletionListener() {
+                                    @Override
+                                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                        Log.d(TAG, "onComplete image");
+                                    }
+                                });
                             }
                         }
                     });
