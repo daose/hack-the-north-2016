@@ -99,8 +99,12 @@ public class YelpActivity extends AppCompatActivity {
         });
 
         RecyclerView hoursView = (RecyclerView) findViewById(R.id.hours_view);
-        hoursView.setLayoutManager(new LinearLayoutManager(this));
-        hoursView.setAdapter(new HoursAdapter(store.getHours()));
+        if (store.getHours()[0] == null || store.getHours()[0].isEmpty()) {
+            hoursView.setVisibility(View.GONE);
+        } else {
+            hoursView.setLayoutManager(new LinearLayoutManager(this));
+            hoursView.setAdapter(new HoursAdapter(store.getHours()));
+        }
     }
 
 
@@ -205,7 +209,7 @@ public class YelpActivity extends AppCompatActivity {
                 Elements elements = doc.select("div.biz-hours td:not(td.extra)");
                 if (elements == null || elements.isEmpty()) return null;
                 for (int i = 0; i < elements.size(); i++) {
-                    Log.d(TAG, "hour: " +  elements.get(i).text());
+                    Log.d(TAG, "hour: " + elements.get(i).text());
                     store.getHours()[i] = elements.get(i).text();
                 }
             } catch (Exception e) {

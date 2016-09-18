@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         startService(intent);
 
         FirebaseDatabase db = FirebaseDatabase.getInstance();
-        DatabaseReference ref = db.getReference("test");
+        DatabaseReference ref = db.getReference("copy");
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
                         Intent intent = new Intent(MainActivity.this, YelpActivity.class);
                         intent.putExtra("url", uri.toString());
                         startActivity(intent);
+                        finish();
                     }
                 }
             }

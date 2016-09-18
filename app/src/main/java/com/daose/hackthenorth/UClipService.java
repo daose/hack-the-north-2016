@@ -49,7 +49,7 @@ public class UClipService extends Service {
         //connects to Firebase
         db = FirebaseDatabase.getInstance();
         //reference to copy
-        ref = db.getReference("test");
+        ref = db.getReference("copy");
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReferenceFromUrl("gs://uclip-e2537.appspot.com");
 
