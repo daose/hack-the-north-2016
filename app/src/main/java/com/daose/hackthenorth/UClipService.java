@@ -49,7 +49,7 @@ public class UClipService extends Service {
         //connects to Firebase
         db = FirebaseDatabase.getInstance();
         //reference to copy
-        ref = db.getReference("copy");
+        ref = db.getReference("test");
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReferenceFromUrl("gs://uclip-e2537.appspot.com");
 
@@ -77,7 +77,7 @@ public class UClipService extends Service {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (clipboard.hasPrimaryClip()) {
-                    ClipData data = ClipData.newPlainText("copy", dataSnapshot.getValue(String.class));
+                    ClipData data = ClipData.newPlainText("test", dataSnapshot.getValue(String.class));
                     clipboard.setPrimaryClip(data);
                 }
             }
