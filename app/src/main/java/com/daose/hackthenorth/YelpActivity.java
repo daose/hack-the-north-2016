@@ -97,7 +97,6 @@ public class YelpActivity extends AppCompatActivity {
                 startActivity(mapIntent);
             }
         });
-
         RecyclerView hoursView = (RecyclerView) findViewById(R.id.hours_view);
         if (store.getHours()[0] == null || store.getHours()[0].isEmpty()) {
             hoursView.setVisibility(View.GONE);
