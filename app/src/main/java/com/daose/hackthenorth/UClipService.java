@@ -132,7 +132,6 @@ public class UClipService extends Service {
         };
         ssObserver.startWatching();
     }
-
     @Override
     public void onDestroy() {
         ssObserver.stopWatching();
